@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>PikoeOS – Tesla-inlogcode</title>
+<style>
+body{font:16px/1.5 system-ui,-apple-system,sans-serif;max-width:620px;margin:50px auto;padding:0 16px;color:#073642;background:#fdf6e3}
+code{display:block;word-break:break-all;background:#eee8d5;border:1px solid #d8d1bb;border-radius:8px;padding:12px;font-size:15px}
+button{font:inherit;margin-top:10px;padding:8px 14px;border-radius:8px;border:0;background:#268bd2;color:#fff;cursor:pointer}
+.err{color:#b52a26}.mute{color:#586e75;font-size:14px}
+</style>
+</head>
+<body>
+<h1>PikoeOS – Tesla-inlogcode</h1>
+<div id="out"></div>
+<p class="mute">Deze pagina draait volledig in je browser: de code wordt nergens naartoe gestuurd. Plak hem in het
+terminalvenster waar <b>node tesla.js login</b> op wacht. De code is maar enkele minuten geldig en werkt één keer.</p>
+<script>
+// Leest alleen de parameters uit de adresbalk en toont ze; geen netwerkverkeer, geen opslag.
+const p=new URLSearchParams(location.search),out=document.getElementById("out");
+const code=p.get("code"),err=p.get("error");
+if(code){
+  out.innerHTML='<p>Inloggen gelukt. Kopieer deze code:</p><code id="c"></code><button id="b" type="button">Kopiëren</button><p class="mute">Controlewaarde (state): <span id="s"></span></p>';
+  document.getElementById("c").textContent=code;
+  document.getElementById("s").textContent=p.get("state")||"–";
+  document.getElementById("b").onclick=()=>navigator.clipboard.writeText(code).then(()=>{document.getElementById("b").textContent="Gekopieerd ✓"});
+}else if(err){
+  out.innerHTML='<p class="err">Tesla meldde een fout: <b id="e"></b></p>';
+  document.getElementById("e").textContent=err+(p.get("error_description")?" – "+p.get("error_description"):"");
+}else{
+  out.innerHTML='<p>Geen code gevonden. Deze pagina wordt geopend door Tesla na het inloggen.</p>';
+}
+// Code uit de adresbalk en de geschiedenis halen, zodat hij niet blijft staan
+if(code||err)history.replaceState(null,"",location.pathname);
+</script>
+</body>
+</html>
